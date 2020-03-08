@@ -2,6 +2,19 @@
 - import_playbook: "set_variables.yml"
   tags: always
 
+- name: Add hostname to /etc/hosts
+  hosts: hadoop-cluster
+  tasks:
+  - name: add hostname
+    become: true
+    blockinfile:
+      path: /etc/hosts
+      block: |
+        # Test
+        {% for host in groups['all'] %}
+        {{ hostvars[host].ansible_host }} {{ host }}
+        {% endfor %}
+
 - name: Apply the common role to the hadoop-cluster group
   hosts: hadoop-cluster
   any_errors_fatal: true
